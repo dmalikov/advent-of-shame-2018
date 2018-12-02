@@ -28,34 +28,34 @@ readFile' fp = do
     Left e => do print e; pure empty
     Right s => pure (lines s)
 
-assert : Int -> Int -> IO ()
-assert actual expected =
+assert : (expected : Int) -> (actual : Int) -> IO ()
+assert expected actual =
   if (actual /= expected)
     then putStrLn ("assertion failed: expectes " ++ show expected ++ ", but was " ++ show actual)
     else pure ()
 
-assert_eff : Eff Int [EXCEPTION InputError] -> Int -> IO ()
-assert_eff actual_eff expected =
-  case the (Either InputError Int) (run actual_eff) of
+on_freqs_eff : (Int -> IO ()) -> Eff Int [EXCEPTION InputError] -> IO ()
+on_freqs_eff f eff =
+  case the (Either InputError Int) (run eff) of
     Left EmptyInput => putStrLn "invalid input: list of freqs is empty"
-    Right actual    => assert actual expected
+    Right r         => f r
+
+assert_eff : Int -> Eff Int [EXCEPTION InputError] -> IO ()
+assert_eff = on_freqs_eff . assert
 
 print_eff : Eff Int [EXCEPTION InputError] -> IO ()
-print_eff eff = do
-  case the (Either InputError Int) (run eff) of
-       Left EmptyInput => putStrLn "invalid input: list of freqs is empty"
-       Right actual    => printLn actual
+print_eff = on_freqs_eff printLn
 
 partial day01 : IO ()
 day01 = do
-  assert (solve1 [1, 1, 1]) 3
-  assert (solve1 [1, 1, (-2)]) 0
-  assert (solve1 [(-1), (-2), (-3)]) (-6)
-  assert_eff (solve2 [1, (-2), 3, 1]) 2
-  assert_eff (solve2 [1, (-1)]) 0
-  assert_eff (solve2 [3, 3, 4, (-2), (-4)]) 10
-  assert_eff (solve2 [(-6), 3, 8, 5, (-6)]) 5
-  assert_eff (solve2 [7, 7, (-2), (-7), (-4)]) 14
+  assert 3 (solve1 [1, 1, 1])
+  assert 0 (solve1 [1, 1, (-2)])
+  assert (-6) (solve1 [(-1), (-2), (-3)])
+  assert_eff 2 (solve2 [1, (-2), 3, 1])
+  assert_eff 0 (solve2 [1, (-1)])
+  assert_eff 10 (solve2 [3, 3, 4, (-2), (-4)])
+  assert_eff 5 (solve2 [(-6), 3, 8, 5, (-6)])
+  assert_eff 14 (solve2 [7, 7, (-2), (-7), (-4)])
   ints <- (catMaybes . map parseInteger) <$> readFile' "input/day01.txt"
   printLn (solve1 ints)
   print_eff (solve2 ints)
