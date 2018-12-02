@@ -1,3 +1,5 @@
+module Day02
+
 import Data.SortedSet
 import Data.String
 import Effects

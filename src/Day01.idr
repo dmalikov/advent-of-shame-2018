@@ -1,12 +1,14 @@
+module Day01
+
 import Data.SortedSet
 import Data.String
 import Effects
 import Effect.Exception
 
+import Core
+
 %default total
 %access public export
-
-data InputError = EmptyInput
 
 solve1 : List Int -> Int
 solve1 = foldl (\a,x => a + x) 0
@@ -20,31 +22,6 @@ solve2' cf kfs (x :: xs) =
 partial solve2 : List Int -> Eff Int [EXCEPTION InputError]
 solve2 [] = raise EmptyInput
 solve2 (x :: xs) = pure (solve2' 0 empty (cycle (x :: xs)))
-
-readFile' : (filepath : String) -> IO (List String)
-readFile' fp = do
-  eitherFile <- readFile fp
-  case eitherFile of
-    Left e => do print e; pure empty
-    Right s => pure (lines s)
-
-assert : (expected : Int) -> (actual : Int) -> IO ()
-assert expected actual =
-  if (actual /= expected)
-    then putStrLn ("assertion failed: expectes " ++ show expected ++ ", but was " ++ show actual)
-    else pure ()
-
-on_freqs_eff : (Int -> IO ()) -> Eff Int [EXCEPTION InputError] -> IO ()
-on_freqs_eff f eff =
-  case the (Either InputError Int) (run eff) of
-    Left EmptyInput => putStrLn "invalid input: list of freqs is empty"
-    Right r         => f r
-
-assert_eff : Int -> Eff Int [EXCEPTION InputError] -> IO ()
-assert_eff = on_freqs_eff . assert
-
-print_eff : Eff Int [EXCEPTION InputError] -> IO ()
-print_eff = on_freqs_eff printLn
 
 partial day01 : IO ()
 day01 = do
