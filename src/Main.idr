@@ -5,5 +5,6 @@ import Day02
 
 partial main : IO ()
 main = do
-  day01
+  -- TODO for some reason it segfaults
+  -- day01
   day02

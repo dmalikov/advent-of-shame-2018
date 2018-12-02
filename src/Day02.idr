@@ -53,6 +53,41 @@ count letters = let letter_counts = elem_counts letters in
 solve1 : List String -> Integer
 solve1 = checksum . agg_counter . map (count . unpack)
 
+pairs : Eq a => List a -> List (a, a)
+pairs xs = do
+  (x, idx) <- zip xs [1 .. length xs]
+  y <- drop idx xs
+  pure (x, y)
+
+diff : (Eq a) => List a -> List a -> Nat
+diff [] _ = 0
+diff (x :: xs) [] = 0
+diff (x :: xs) (y :: ys) =
+  if x /= y
+    then 1 + (diff xs ys)
+    else diff xs ys
+
+diff_in_1 : (Eq a) => List a -> List a -> Bool
+diff_in_1 xs ys = (diff xs ys) == 1
+
+common_elems : (Eq a) => List a -> List a -> List a
+common_elems [] _ = []
+common_elems (x :: xs) [] = []
+common_elems (x :: xs) (y :: ys) =
+  if x == y
+    then x :: (common_elems xs ys)
+    else common_elems xs ys
+
+maybeList : Maybe (List a) -> List a
+maybeList Nothing   = []
+maybeList (Just xs) = xs
+
+solve2' : List Box -> List Char
+solve2' = maybeList . map (uncurry common_elems) . listToMaybe . filter (uncurry diff_in_1) . pairs
+
+solve2 : List String -> String
+solve2 = pack . solve2' . map unpack
+
 partial day02 : IO ()
 day02 = do
   putStrLn "Day 02"
@@ -65,5 +100,15 @@ day02 = do
     , "abcdee"
     , "ababab"
     ])
+  assert "fgij" (solve2
+    [ "abcde"
+    , "fghij"
+    , "klmno"
+    , "pqrst"
+    , "fguij"
+    , "axcye"
+    , "wvxyz"
+    ])
   boxes <- readFile' "input/day02.txt"
   printLn (solve1 boxes)
+  putStrLn (solve2 boxes)
