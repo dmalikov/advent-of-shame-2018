@@ -48,6 +48,7 @@ print_eff = on_freqs_eff printLn
 
 partial day01 : IO ()
 day01 = do
+  putStrLn "Day 01"
   assert 3 (solve1 [1, 1, 1])
   assert 0 (solve1 [1, 1, (-2)])
   assert (-6) (solve1 [(-1), (-2), (-3)])

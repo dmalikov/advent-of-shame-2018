@@ -1,6 +1,6 @@
 package aoc-2018
 
-modules = Main
+modules = Main, Day01, Day02, Core
 
 sourcedir = src
 pkgs = contrib, effects
