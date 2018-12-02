@@ -1,0 +1,8 @@
+package aoc-2018
+
+modules = Main
+
+sourcedir = src
+pkgs = contrib, effects
+executable = aoc2018
+main = Main
