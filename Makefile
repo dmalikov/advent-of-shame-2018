@@ -1,5 +1,5 @@
 repl:
-	idris -i src -p contrib -p effects
+	idris -i src -p contrib -p effects -p lightyear
 
 build:
 	idris --build aoc-2018.ipkg

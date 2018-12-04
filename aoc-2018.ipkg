@@ -1,8 +1,12 @@
 package aoc-2018
 
 modules = Main
+        , Core
+        , Day01
+        , Day02
+        , Day03
 
 sourcedir = src
-pkgs = contrib, effects
+pkgs = contrib, effects, lightyear
 executable = aoc2018
 main = Main
