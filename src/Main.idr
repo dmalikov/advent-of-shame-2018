@@ -7,7 +7,7 @@ import Day04
 
 partial main : IO ()
 main = do
---  day01
---  day02
---  day03
+  day01
+  day02
+  -- day03 TODO: this is too slow
   day04

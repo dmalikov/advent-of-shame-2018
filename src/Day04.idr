@@ -44,8 +44,11 @@ Show Event where
   show (FallAsleep time      ) = "FallAsleep at " ++ show time
   show (WakesUp    time      ) = "WakesUp at "    ++ show time
 
+NapMap : Type
+NapMap = SortedMap Minute Nat
+
 Naps : Type
-Naps = SortedMap Guard (SortedMap Minute Nat)
+Naps = SortedMap Guard NapMap
 
 partial groupGuards : List (Guard, List (Minute, Minute)) -> List (Guard, List (Minute, Minute))
 groupGuards [] = []
@@ -67,11 +70,14 @@ on g f x y = g (f x) (f y)
 maxBy : Ord b => (a -> b) -> List a -> Maybe a
 maxBy f = map fst . listToMaybe . reverse . sortBy (compare `on` snd) . map (\x => (x, f x))
 
-guard_x_minute : Naps -> Integer
-guard_x_minute naps =
-  case maxBy (sum . values . snd) . toList $ naps of
-    Just (g, minutes) => g * (fromMaybe 0 . map Basics.fst . maxBy snd . toList $ minutes)
-    Nothing => 0
+most_sleepy_overall : Naps -> Maybe (Guard, NapMap)
+most_sleepy_overall = maxBy (sum . values . snd) . toList
+
+most_sleepy_same_time : Naps -> Maybe (Guard, NapMap)
+most_sleepy_same_time = maxBy (listToMaybe . reverse . sort . values . snd) . toList
+
+guard_x_minute : (Guard, NapMap) -> Integer
+guard_x_minute (g, minutes) = g * (fromMaybe 0 . map Basics.fst . maxBy snd . toList $ minutes)
 
 partial guardP : Parser Guard
 guardP = fromDigits <$> some digit
@@ -127,10 +133,13 @@ group_events ((FallAsleep _) :: xs) = group_events xs
 group_events ((WakesUp _) :: xs) = group_events xs
 
 partial solve1 : List String -> Integer
-solve1 = guard_x_minute . mkNaps . group_events . sort_parse
+solve1 = maybe 0 guard_x_minute . most_sleepy_overall . mkNaps . group_events . sort_parse
 
-input1 : List String
-input1 =
+partial solve2 : List String -> Integer
+solve2 = maybe 0 guard_x_minute . most_sleepy_same_time . mkNaps . group_events . sort_parse
+
+test_input : List String
+test_input =
   [ "[1518-11-01 00:00] Guard #10 begins shift"
   , "[1518-11-01 00:05] falls asleep"
   , "[1518-11-01 00:25] wakes up"
@@ -153,6 +162,8 @@ input1 =
 partial day04 : IO ()
 day04 = do
   putStrLn "Day 04"
-  assert 240 (solve1 input1)
+  assert 240 (solve1 test_input)
+  assert 4455 (solve2 test_input)
   strings <- readFile' "input/day04.txt"
   printLn (solve1 strings)
+  printLn (solve2 strings)
