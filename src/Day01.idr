@@ -25,7 +25,7 @@ solve2 (x :: xs) = pure (solve2' 0 empty (cycle (x :: xs)))
 
 partial day01 : IO ()
 day01 = do
-  putStrLn "Day 01"
+  putStr "Day 01: "
   assert 3 (solve1 [1, 1, 1])
   assert 0 (solve1 [1, 1, (-2)])
   assert (-6) (solve1 [(-1), (-2), (-3)])
@@ -35,5 +35,7 @@ day01 = do
   assert_eff 5 (solve2 [(-6), 3, 8, 5, (-6)])
   assert_eff 14 (solve2 [7, 7, (-2), (-7), (-4)])
   ints <- (catMaybes . map parseInteger) <$> readFile' "input/day01.txt"
-  printLn (solve1 ints)
+  print (solve1 ints)
+  putStr " | "
   print_eff (solve2 ints)
+  putStrLn ""

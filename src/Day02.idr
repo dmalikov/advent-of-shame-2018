@@ -79,7 +79,7 @@ solve2 = pack . solve2' . map unpack
 
 partial day02 : IO ()
 day02 = do
-  putStrLn "Day 02"
+  putStr "Day 02: "
   assert 12 (solve1
     [ "abcdef"
     , "bababc"
@@ -99,5 +99,7 @@ day02 = do
     , "wvxyz"
     ])
   boxes <- readFile' "input/day02.txt"
-  printLn (solve1 boxes)
-  putStrLn (solve2 boxes)
+  print (solve1 boxes)
+  putStr " | "
+  putStr (solve2 boxes)
+  putStrLn ""

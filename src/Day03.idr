@@ -78,7 +78,7 @@ solve2 strings =
 
 partial day03 : IO ()
 day03 = do
-  putStrLn "Day 03"
+  putStr "Day 03: "
   assert 4 (solve1
     [ "#1 @ 1,3: 4x4"
     , "#2 @ 3,1: 4x4"
@@ -90,5 +90,7 @@ day03 = do
     , "#3 @ 5,5: 2x2"
     ])
   strings <- readFile' "input/day03.txt"
-  printLn (solve1 strings)
-  printLn (solve2 strings)
+  print (solve1 strings)
+  putStr " | "
+  print (solve2 strings)
+  putStrLn ""

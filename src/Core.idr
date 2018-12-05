@@ -31,7 +31,7 @@ assert_eff : (Eq a, Show a) => a -> Eff a [EXCEPTION InputError] -> IO ()
 assert_eff = on_ne_eff . assert
 
 print_eff : (Eq a, Show a) => Eff a [EXCEPTION InputError] -> IO ()
-print_eff = on_ne_eff printLn
+print_eff = on_ne_eff print
 
 readFile' : (filepath : String) -> IO (List String)
 readFile' fp = do

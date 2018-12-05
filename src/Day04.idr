@@ -161,9 +161,11 @@ test_input =
 
 partial day04 : IO ()
 day04 = do
-  putStrLn "Day 04"
+  putStr "Day 04: "
   assert 240 (solve1 test_input)
   assert 4455 (solve2 test_input)
   strings <- readFile' "input/day04.txt"
-  printLn (solve1 strings)
-  printLn (solve2 strings)
+  print (solve1 strings)
+  putStr " | "
+  print (solve2 strings)
+  putStrLn ""
