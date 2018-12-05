@@ -45,9 +45,6 @@ record Claim where
   padX, padY : Pad
   sizeX, sizeY : Size
 
-fromDigits : List (Fin 10) -> Integer
-fromDigits = foldl (\a, b => 10 * a + cast b) 0
-
 -- "#1 @ 1,3: 4x4" -> Claim { claimId = "1", padX = 1, padY = 3, sizeX = 4, sizeY = 4 }
 partial claim : Parser Claim
 claim = MkClaim
@@ -56,12 +53,6 @@ claim = MkClaim
   <*> (spaces *> string "," *> spaces *> (fromDigits <$> some digit))
   <*> (spaces *> string ":" *> spaces *> (fromDigits <$> some digit))
   <*> (spaces *> string "x" *>           (fromDigits <$> some digit))
-
-parse' : Parser a -> String -> Maybe a
-parse' p i =
-  case parse p i of
-    Left e  => Nothing
-    Right r => Just r
 
 fabric : Claim -> Fabric
 fabric (MkClaim claimId padX padY sizeX sizeY) = fromList (zip fill (replicate (length fill) (Single claimId)))
@@ -83,7 +74,7 @@ solve2 strings =
   let claims : List Claim = catMaybes . map (parse' claim) $ strings
       claimSizes : List (ClaimId, Integer) = map (\(MkClaim claimId _ _ sizeX sizeY) => (claimId, sizeX * sizeY)) claims
       nonOverlapped : List (ClaimId, Integer) = map (\(a, b) => (a, toIntegerNat b)) .  group . sort . catMaybes . map toClaimId . values . overlap . map fabric $ claims
-   in map (\(a,b) => a) $ intersect claimSizes nonOverlapped
+   in map fst $ intersect claimSizes nonOverlapped
 
 partial day03 : IO ()
 day03 = do

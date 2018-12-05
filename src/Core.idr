@@ -2,6 +2,9 @@ module Core
 
 import Effects
 import Effect.Exception
+import Lightyear
+import Lightyear.Char
+import Lightyear.Strings
 
 %default total
 %access public export
@@ -49,3 +52,12 @@ group' current cnt (x :: xs) =
 group : (Eq a) => List a -> List (a, Nat)
 group [] = []
 group (x :: xs) = group' x 1 xs
+
+parse' : Parser a -> String -> Maybe a
+parse' p i =
+  case parse p i of
+    Left e  => Nothing
+    Right r => Just r
+
+fromDigits : List (Fin 10) -> Integer
+fromDigits = foldl (\a, b => 10 * a + cast b) 0
