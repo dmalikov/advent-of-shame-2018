@@ -6,7 +6,6 @@ import Core
 %access public export
 
 
-
 Polymer : Type
 Polymer = List Char
 
@@ -21,13 +20,25 @@ add x (y :: xs) =
     then xs
     else x :: y :: xs
 
+reduce : Polymer -> Polymer
+reduce = foldr add []
+
+remove_and_reduce : Char -> Polymer -> Polymer
+remove_and_reduce c = reduce . filter (\x => toLower x /= c)
+
 solve1 : String -> Nat
-solve1 = length . foldr add [] . unpack
+solve1 = length . reduce . unpack
+
+solve2 : String -> Nat
+solve2 = fromMaybe 0 . listToMaybe . sort . map (length . uncurry remove_and_reduce) . zip ['a' .. 'z'] . replicate 26 . unpack
 
 partial day05 : IO ()
 day05 = do
   putStr "Day 05: "
   assert 10 (solve1 "dabAcCaCBAcCcaDA")
+  assert 4 (solve2 "dabAcCaCBAcCcaDA")
   string <- fromMaybe "" . listToMaybe <$> readFile' "input/day05.txt"
   print (solve1 string)
+  putStr " | "
+  print (solve2 string)
   putStrLn ""
