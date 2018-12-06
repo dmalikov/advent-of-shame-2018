@@ -61,3 +61,6 @@ parse' p i =
 
 fromDigits : List (Fin 10) -> Integer
 fromDigits = foldl (\a, b => 10 * a + cast b) 0
+
+on : (b -> b -> c) -> (a -> b) -> a -> a -> c
+on g f x y = g (f x) (f y)

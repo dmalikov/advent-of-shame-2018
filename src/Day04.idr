@@ -64,9 +64,6 @@ freq_minutes = group . sort . concatMap (\(f, t) => [f .. (t - 1)])
 partial mkNaps : List (Guard, List (Minute, Minute)) -> Naps
 mkNaps = fromList . map (\(x,y) => (x, fromList . freq_minutes $ y)) . groupGuards . sort
 
-on : (b -> b -> c) -> (a -> b) -> a -> a -> c
-on g f x y = g (f x) (f y)
-
 maxBy : Ord b => (a -> b) -> List a -> Maybe a
 maxBy f = map fst . listToMaybe . reverse . sortBy (compare `on` snd) . map (\x => (x, f x))
 
