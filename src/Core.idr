@@ -6,6 +6,10 @@ import Lightyear
 import Lightyear.Char
 import Lightyear.Strings
 
+import public Data.Either.Contrib
+import public Data.Function.Contrib
+import public Data.List.Contrib
+
 %default total
 %access public export
 
@@ -16,8 +20,8 @@ data InputError
 
 assert : (Eq a, Show a) => (expected : a) -> (actual : a) -> IO ()
 assert expected actual =
-  if (actual /= expected)
-    then putStrLn ("assertion failed: expectes " ++ show expected ++ ", but was " ++ show actual)
+  if actual /= expected
+    then putStrLn ("assertion failed: expected " ++ show expected ++ ", but was " ++ show actual)
     else pure ()
 
 on_ne_eff : (Eq a, Show a) => (a -> IO ()) -> Eff a [EXCEPTION InputError] -> IO ()
@@ -37,30 +41,13 @@ readFile' : (filepath : String) -> IO (List String)
 readFile' fp = do
   eitherFile <- readFile fp
   case eitherFile of
-    Left e => do print e; pure empty
+    Left e => do
+      print e
+      pure empty
     Right s => pure (lines s)
 
-group' : (Eq a) => (current : a) -> (cnt : Nat) -> List a -> List (a, Nat)
-group' current cnt [] = [(current, cnt)]
-group' current cnt (x :: xs) =
-  if current == x
-    then group' current (cnt + 1) xs
-    else (current, cnt) :: group' x 1 xs
-
--- | Group identical elements.
--- ["a", "b", "a", "b", "b", "a"] -> [("a", 1), ("b", 1), ("a", 1), ("b", 2), ("a", 1)]
-group : (Eq a) => List a -> List (a, Nat)
-group [] = []
-group (x :: xs) = group' x 1 xs
-
 parse' : Parser a -> String -> Maybe a
-parse' p i =
-  case parse p i of
-    Left e  => Nothing
-    Right r => Just r
+parse' p = eitherToMaybe . parse p
 
 fromDigits : List (Fin 10) -> Integer
 fromDigits = foldl (\a, b => 10 * a + cast b) 0
-
-on : (b -> b -> c) -> (a -> b) -> a -> a -> c
-on g f x y = g (f x) (f y)

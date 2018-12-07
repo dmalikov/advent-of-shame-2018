@@ -1,10 +1,15 @@
 package aoc-2018
 
 modules = Main
+        , Data.Either.Contrib
+        , Data.Function.Contrib
+        , Data.List.Contrib
         , Core
         , Day01
         , Day02
         , Day03
+        , Day04
+        , Day05
 
 sourcedir = src
 pkgs = contrib, effects, lightyear

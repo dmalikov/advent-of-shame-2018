@@ -4,7 +4,7 @@ repl:
 build:
 	idris --build aoc-2018.ipkg
 
-run: build
+run:
 	./aoc2018
 
 clean:
