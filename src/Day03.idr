@@ -1,5 +1,6 @@
 module Day03
 
+import Data.List
 import Data.SortedMap
 import Effects
 import Effect.Exception
@@ -24,9 +25,13 @@ Size = Integer
 
 data Overlap = Single ClaimId | Many
 
+Show Overlap where
+  show (Single claimId) = "Single " ++ show claimId
+  show Many             = "Many"
+
 toClaimId : Overlap -> Maybe ClaimId
 toClaimId (Single c) = Just c
-toClaimId _ = Nothing
+toClaimId            _ = Nothing
 
 overlaps : Overlap -> Overlap -> Overlap
 overlaps _ _ = Many
@@ -63,11 +68,12 @@ fabric (MkClaim claimId padX padY sizeX sizeY) = fromList (zip fill (replicate (
     y <- [(padY + 1) .. (padY + sizeY)]
     pure (x, y)
 
+-- TODO: this seems to be a bottleneck in the performance, figure out why
 overlap : List Fabric -> Fabric
 overlap = foldl (mergeWith overlaps) empty
 
 partial solve1 : List String -> Nat
-solve1 = List.length . List.filter (\x => x == Many) . values . overlap . map fabric . catMaybes . map (parse' claim)
+solve1 = List.length . List.filter (== Many) . values . overlap . map fabric . catMaybes . map (parse' claim)
 
 partial solve2 : List String -> List ClaimId
 solve2 strings =
