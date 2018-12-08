@@ -10,6 +10,7 @@ modules = Main
         , Day03
         , Day04
         , Day05
+        , Day07
 
 sourcedir = src
 pkgs = contrib, effects, lightyear

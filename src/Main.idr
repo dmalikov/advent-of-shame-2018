@@ -3,6 +3,7 @@ import Day02
 import Day03
 import Day04
 import Day05
+import Day07
 
 %default total
 
@@ -13,3 +14,4 @@ main = do
   -- day03 TODO: this is too slow
   day04
   day05
+  day07
