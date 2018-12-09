@@ -5,6 +5,7 @@ import Day04
 import Day05
 import Day07
 import Day08
+import Day09
 
 %default total
 
@@ -17,3 +18,4 @@ main = do
   day05
   day07
   day08
+  day09
